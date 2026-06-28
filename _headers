@@ -1,0 +1,16 @@
+# Netlify Basic 인증 설정 파일
+#
+# 이 파일은 저장소 최상위(index.html과 같은 위치)에 두면
+# Netlify가 자동으로 인식해서 사이트 전체에 비밀번호를 겁니다.
+# 무료 플랜에서도 동작합니다.
+#
+# 아래 "revuser"와 "changeme123"을 원하는 아이디/비밀번호로 바꿔주세요.
+# 형식: Basic-Auth: 아이디:비밀번호
+#
+# 여러 사람에게 다른 비밀번호를 주고 싶으면 줄을 추가하면 됩니다.
+# 예)
+#   Basic-Auth: alice:비번1
+#   Basic-Auth: bob:비번2
+
+/*
+  Basic-Auth: 
