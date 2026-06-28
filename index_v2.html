@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- 기본 아이콘 -->
+<link rel="apple-touch-icon" href="/icon.png">
+<!-- 애플(iOS/Safari) 아이콘 설정 -->
+<link rel="apple-touch-icon" sizes="180x180" href="/icon.png>
+<link rel="apple-touch-icon-precomposed" href="/icon.png">
+<meta name="apple-mobile-web-app-title" content="웹앱이름">
+<!-- 안드로이드(Chrome/삼성 인터넷) 아이콘 및 설정 -->
+<link rel="icon" type="image/png" sizes="192x192" href="/icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>요한계시록 암기</title>
@@ -125,7 +133,7 @@
   /* ---------- 홈 화면 ---------- */
   .hero{
     padding:18px 4px 30px;
-    text-align: center;
+    text-align:center;
   }
   .hero .eyebrow{
     font-size:12px;
@@ -153,7 +161,7 @@
 
   .seal-row{
     display:flex;
-    gap:8px;
+    gap:6px;
     margin-top:18px;
     justify-content:center;
   }
@@ -568,7 +576,7 @@
   <header>
     <div id="header-left" class="header-spacer"></div>
     <div id="header-title" class="brand">
-      <span class="mark">요한계시록&nbsp;<span class="accent">암기</span></span>
+      <span class="mark">요한계시록<span class="accent">암기</span></span>
     </div>
     <div class="header-spacer"></div>
   </header>
@@ -721,6 +729,10 @@ function toggleChapter(ch){
 function startTest(){
   if(state.selectedChapters.length===0) return;
   state.graded=false;
+  // 이전에 다른 장으로 풀었던 캐시 데이터가 남아있으면 새 선택이 무시되므로,
+  // 새 시험을 시작할 때마다 캐시를 비워 항상 현재 선택한 장으로 다시 만든다.
+  wordTestData = null;
+  blankTestData = null;
   state.screen = state.mode==='word' ? 'wordtest' : 'blanktest';
   render();
 }
