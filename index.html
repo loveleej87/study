@@ -3,21 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<!-- 기본 아이콘 -->
-<link rel="apple-touch-icon" href="/icon.png">
-<!-- 애플(iOS/Safari) 아이콘 설정 -->
-<link rel="apple-touch-icon" sizes="180x180" href="/icon.png">
-<link rel="apple-touch-icon-precomposed" href="/icon.png">
-<meta name="apple-mobile-web-app-title" content="웹앱이름">
-<!-- 안드로이드(Chrome/삼성 인터넷) 아이콘 및 설정 -->
-<link rel="icon" type="image/png" sizes="192x192" href="/icon.png">
-<!-- 홈 화면에 추가했을 때 보여질 앱의 이름 -->
-<meta name="apple-mobile-web-app-title" content="RV암기">
-<meta name="application-name" content="RV암기">
-<!-- iOS 웹앱 모드 실행 (주소창 숨기기 등) -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>요한계시록 암기</title>
+<title>요한계시록암기</title>
 <script src="bible-data.js"></script>
 <style>
   :root{
@@ -39,6 +27,7 @@
     --font-ui:-apple-system,BlinkMacSystemFont,'Pretendard','Apple SD Gothic Neo',sans-serif;
     --safe-top:env(safe-area-inset-top,0px);
     --safe-bottom:env(safe-area-inset-bottom,0px);
+    --tabbar-h:64px;
   }
 
   *{box-sizing:border-box;}
@@ -129,7 +118,7 @@
     flex:1;
     position:relative;
     z-index:2;
-    padding:0 22px calc(28px + var(--safe-bottom));
+    padding:0 22px calc(28px + var(--tabbar-h) + var(--safe-bottom));
     display:flex;
     flex-direction:column;
   }
@@ -137,7 +126,6 @@
   /* ---------- 홈 화면 ---------- */
   .hero{
     padding:18px 4px 30px;
-    text-align:center;
   }
   .hero .eyebrow{
     font-size:12px;
@@ -167,7 +155,6 @@
     display:flex;
     gap:6px;
     margin-top:18px;
-    justify-content:center;
   }
   .seal-dot{
     width:9px;height:9px;
@@ -232,11 +219,13 @@
     color:var(--parchment);
     margin:18px 0 4px;
     font-weight:700;
+    text-align: center;
   }
   .panel-sub{
     font-size:13px;
     color:var(--text-dim);
     margin:0 0 16px;
+    text-align: center;
   }
   .chip-row{
     display:flex;
@@ -346,9 +335,8 @@
   .read-chapter-nav{
     display:flex;
     align-items:center;
-    justify-content:space-between;
+    justify-content:center;
     margin-bottom:14px;
-    gap:10px;
   }
   .nav-btn{
     width:38px;height:38px;
@@ -361,7 +349,44 @@
     cursor:pointer;
   }
   .nav-btn:disabled{opacity:0.25;cursor:default;}
+  .chapter-pick-btn{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 18px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(255,255,255,0.035);
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .chapter-pick-btn:active{ transform:scale(0.97); }
+  .chapter-pick-num{
+    font-family:var(--font-display);
+    font-size:18px;
+    font-weight:700;
+    color:var(--parchment);
+  }
+  .chapter-pick-caret{
+    color:var(--gold-bright);
+    font-size:13px;
+  }
+  .chapter-pick-select{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:0;
+    border:none;
+    cursor:pointer;
+    -webkit-appearance:none;
+    appearance:none;
+  }
   .chapter-label{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
     font-family:var(--font-display);
     font-size:18px;
     font-weight:700;
@@ -371,6 +396,7 @@
   }
   .chapter-label small{
     display:block;
+    text-align:center;
     font-family:var(--font-ui);
     font-size:11.5px;
     font-weight:500;
@@ -516,6 +542,11 @@
     display:none;
   }
   .answer-reveal.show{display:block;}
+  .answer-reveal.spacing-note{
+    background:rgba(201,162,75,0.08);
+    border-left-color:var(--gold);
+  }
+  .answer-reveal.spacing-note .label{ color:var(--gold-bright); }
   .answer-reveal .label{
     font-size:11px;
     font-weight:700;
@@ -529,7 +560,7 @@
 
   .score-banner{
     position:sticky;
-    bottom:0;
+    bottom:calc(var(--tabbar-h) + var(--safe-bottom) - 8px);
     margin-top:18px;
     padding-top:14px;
     background:linear-gradient(180deg, transparent, var(--ink) 28%);
@@ -569,6 +600,113 @@
   .fade-in{animation:fadeIn .35s ease both;}
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
+  /* ---------- 하단 플로팅 탭바 ---------- */
+  #tab-bar{
+    position:fixed;
+    left:50%;
+    bottom:0;
+    transform:translateX(-50%);
+    width:100%;
+    max-width:480px;
+    height:calc(var(--tabbar-h) + var(--safe-bottom));
+    padding-bottom:var(--safe-bottom);
+    display:flex;
+    align-items:stretch;
+    background:rgba(11,18,32,0.86);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    border-top:1px solid var(--line);
+    z-index:50;
+  }
+  @media (min-width:900px){
+    #tab-bar{ max-width:560px; }
+  }
+  .tab-item{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    cursor:pointer;
+    padding:6px 0 2px;
+    transition:color .15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .tab-item.active{ color:var(--gold-bright); }
+  .tab-item:active{ opacity:0.7; }
+  .tab-icon{ display:flex; align-items:center; justify-content:center; }
+  .tab-label{
+    font-size:10.5px;
+    font-weight:600;
+    font-family:var(--font-ui);
+    letter-spacing:0.01em;
+  }
+
+  /* ---------- 성경보기: 플로팅 이전/다음 버튼 ---------- */
+  #read-floating-nav{
+    position:fixed;
+    left:50%;
+    bottom:calc(var(--tabbar-h) + var(--safe-bottom) + 14px);
+    transform:translateX(-50%);
+    width:100%;
+    max-width:480px;
+    display:flex;
+    justify-content:space-between;
+    padding:0 22px;
+    pointer-events:none;
+    z-index:40;
+  }
+  @media (min-width:900px){
+    #read-floating-nav{ max-width:560px; }
+  }
+  .float-nav-btn{
+    pointer-events:auto;
+    width:50px;height:50px;
+    border-radius:50%;
+    border:1px solid rgba(201,162,75,0.35);
+    background:rgba(18,27,46,0.92);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    color:var(--gold-bright);
+    font-size:22px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:0 6px 20px rgba(0,0,0,0.35);
+    transition:transform .15s, opacity .15s;
+  }
+  .float-nav-btn:active{ transform:scale(0.92); }
+  .float-nav-btn:disabled{ opacity:0.25; pointer-events:none; }
+
+  /* ---------- 시험 화면: 범위 변경 바 ---------- */
+  .scope-bar{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,0.035);
+    border-radius:12px;
+    padding:11px 14px;
+    margin-bottom:18px;
+    cursor:pointer;
+    font-family:var(--font-ui);
+  }
+  .scope-bar-range{
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--parchment);
+  }
+  .scope-bar-edit{
+    font-size:12.5px;
+    color:var(--gold-bright);
+    font-weight:600;
+  }
+
+
   @media (prefers-reduced-motion: reduce){
     .fade-in{animation:none;}
   }
@@ -589,18 +727,37 @@
 
 <script>
 /* =========================================================
-   RV암기 — 상태 & 라우팅
+   요한계시록암기 — 상태 & 라우팅
    ========================================================= */
 const TOTAL_CHAPTERS = 22;
 
 const state = {
-  screen:'home',       // home | scope | read | wordtest | blanktest
-  mode:null,            // 'word' | 'blank'
-  difficulty:'normal',  // easy | normal | hard  (word test only)
-  selectedChapters:[],  // array of chapter numbers
+  screen:'read',         // read | wordtest | blanktest | scope
+  scopeReturnTo:null,    // scope 화면에서 시작하기 누르면 돌아갈 시험 화면 ('wordtest'|'blanktest')
+  mode:null,             // 'word' | 'blank'  (단어시험/백지시험 중 어떤 탭인지)
+  difficulty:'normal',   // easy | normal | hard  (word test only)
+  selectedChapters:[1],  // array of chapter numbers (기본값: 1장)
   readChapter:1,
   graded:false,
 };
+
+/* =========================================================
+   시험 화면 상단 "범위 변경" 바 (단어시험/백지시험 공통)
+   ========================================================= */
+function renderScopeBarHTML(){
+  const chs = state.selectedChapters;
+  const rangeLabel = chs.length===0 ? '범위 미선택'
+    : chs.length===1 ? `${chs[0]}장`
+    : `${chs[0]}장 외 ${chs.length-1}개`;
+  const diffLabel = { easy:'쉬움', normal:'보통', hard:'어려움' }[state.difficulty];
+  const showDiff = state.screen==='wordtest';
+  return `
+    <button class="scope-bar" onclick="openScope()">
+      <span class="scope-bar-range">${rangeLabel}${showDiff ? ' · '+diffLabel : ''}</span>
+      <span class="scope-bar-edit">범위 변경 ›</span>
+    </button>
+  `;
+}
 
 function hasChapterText(ch){
   return Array.isArray(REVELATION[ch]) && REVELATION[ch].length>0;
@@ -614,77 +771,109 @@ function render(){
   headerLeft.innerHTML='';
   headerLeft.className='header-spacer';
 
-  if(state.screen==='home'){
-    headerTitle.innerHTML = `<span class="mark">요한계시록&nbsp;<span class="accent">암기</span></span>`;
-    renderHome(main);
-  } else {
+  if(state.screen==='scope'){
     headerLeft.className='back-btn';
     headerLeft.innerHTML='‹';
     headerLeft.onclick=goBack;
-    const titles = {scope:'범위 선택', read:'성경보기', wordtest:'단어시험', blanktest:'백지시험'};
-    headerTitle.innerHTML = `<span class="screen-title">${titles[state.screen]||''}</span>`;
-    if(state.screen==='scope') renderScope(main);
+    headerTitle.innerHTML = `<span class="screen-title">범위 선택</span>`;
+    renderScope(main);
+    hideReadFloatingNav();
+  } else {
+    headerTitle.innerHTML = `<span class="mark">요한계시록&nbsp;<span class="accent">암기</span></span>`;
     if(state.screen==='read') renderRead(main);
-    if(state.screen==='wordtest') renderWordTest(main);
-    if(state.screen==='blanktest') renderBlankTest(main);
+    if(state.screen==='wordtest'){ renderWordTest(main); hideReadFloatingNav(); }
+    if(state.screen==='blanktest'){ renderBlankTest(main); hideReadFloatingNav(); }
   }
+
+  renderTabBar();
+}
+
+function hideReadFloatingNav(){
+  const nav = document.getElementById('read-floating-nav');
+  if(nav) nav.style.display='none';
 }
 
 function goBack(){
-  if(state.screen==='read' || state.screen==='scope'){ state.screen='home'; }
-  else if(state.screen==='wordtest' || state.screen==='blanktest'){ state.screen='scope'; state.graded=false; }
+  if(state.screen==='scope'){
+    state.screen = state.scopeReturnTo || 'wordtest';
+  }
   render();
 }
 
 /* =========================================================
-   홈 화면
+   하단 플로팅 탭바
    ========================================================= */
-function renderHome(main){
-  const filledCount = Object.keys(REVELATION).filter(k=>hasChapterText(+k)).length;
-  main.innerHTML = `
-    <div class="hero fade-in">
-      <div class="eyebrow">계시의 말씀을 마음에 새기다</div>
-      <h1>요한계시록을<br/>암송하는 시간</h1>
-      <p>읽고, 단어를 채우고, 문장을 써내려가며<br/>한 절씩 마음에 새겨보세요.</p>
-      <div class="seal-row">${Array.from({length:7},(_,i)=>`<span class="seal-dot ${i < Math.ceil(filledCount/22*7) ? 'filled':''}"></span>`).join('')}</div>
-    </div>
-    <div class="menu">
-      <button class="menu-card fade-in" onclick="openRead()">
-        <div class="num">Step 1 · 읽기</div>
-        <h3>성경보기</h3>
-        <p>요한계시록 전체를 처음부터 끝까지 읽습니다.</p>
-        <span class="arrow">›</span>
-      </button>
-      <button class="menu-card fade-in" onclick="openScope('word')">
-        <div class="num">Step 2 · 단어 암송</div>
-        <h3>단어시험</h3>
-        <p>절 곳곳에 빈칸을 두고 단어를 채워 넣으며 외웁니다.</p>
-        <span class="arrow">›</span>
-      </button>
-      <button class="menu-card fade-in" onclick="openScope('blank')">
-        <div class="num">Step 3 · 문장 암송</div>
-        <h3>백지시험</h3>
-        <p>절 전체를 백지에서 직접 써보며 완전히 외웁니다.</p>
-        <span class="arrow">›</span>
-      </button>
-    </div>
-  `;
+function renderTabBar(){
+  let bar = document.getElementById('tab-bar');
+  if(!bar){
+    bar = document.createElement('div');
+    bar.id='tab-bar';
+    document.getElementById('app').appendChild(bar);
+  }
+  const tabs = [
+    { key:'read', label:'성경보기', icon: tabIconBook },
+    { key:'wordtest', label:'단어시험', icon: tabIconWord },
+    { key:'blanktest', label:'백지시험', icon: tabIconBlank },
+  ];
+  // scope 화면일 때는 그 직전에 있던 시험 탭이 활성 표시되도록
+  const activeKey = state.screen==='scope' ? (state.scopeReturnTo||'wordtest') : state.screen;
+  bar.innerHTML = tabs.map(t=>`
+    <button class="tab-item ${activeKey===t.key?'active':''}" onclick="goTab('${t.key}')">
+      <span class="tab-icon">${t.icon(activeKey===t.key)}</span>
+      <span class="tab-label">${t.label}</span>
+    </button>
+  `).join('');
 }
 
-function openRead(){
-  state.screen='read';
-  state.readChapter = Object.keys(REVELATION).map(Number).find(hasChapterText) || 1;
+function goTab(key){
+  if(key==='read'){
+    state.screen='read';
+  } else {
+    // 단어시험/백지시험 탭: 마지막에 풀던 장(또는 기본값 1장)으로 바로 시험 화면 진입
+    state.mode = key==='wordtest' ? 'word' : 'blank';
+    if(state.selectedChapters.length===0) state.selectedChapters=[1];
+    state.graded=false;
+    wordTestData=null;
+    blankTestData=null;
+    state.screen = key;
+  }
   render();
 }
-function openScope(mode){
-  state.mode=mode;
-  state.selectedChapters=[];
+
+/* ---- 탭 아이콘 (SVG, 활성/비활성 색상은 currentColor로 CSS에서 제어) ---- */
+function tabIconBook(active){
+  return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 5.5C4 4.67 4.67 4 5.5 4H11V20H5.5C4.67 20 4 19.33 4 18.5V5.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="${active?'currentColor':'none'}" fill-opacity="${active?'0.18':'0'}"/>
+    <path d="M20 5.5C20 4.67 19.33 4 18.5 4H13V20H18.5C19.33 20 20 19.33 20 18.5V5.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="${active?'currentColor':'none'}" fill-opacity="${active?'0.18':'0'}"/>
+  </svg>`;
+}
+function tabIconWord(active){
+  return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3.5" y="5" width="17" height="14" rx="2" stroke="currentColor" stroke-width="1.6" fill="${active?'currentColor':'none'}" fill-opacity="${active?'0.12':'0'}"/>
+    <path d="M7 10H10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M13 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="0.5 2.6"/>
+    <path d="M7 14H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </svg>`;
+}
+function tabIconBlank(active){
+  return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="3.5" width="16" height="17" rx="2" stroke="currentColor" stroke-width="1.6" fill="${active?'currentColor':'none'}" fill-opacity="${active?'0.12':'0'}"/>
+    <path d="M7.5 14.5L9 16L16.5 8.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+/* =========================================================
+   범위 변경 진입점 (시험 화면 상단 버튼에서 호출)
+   ========================================================= */
+function openScope(){
+  state.scopeReturnTo = state.screen; // wordtest 또는 blanktest
+  state.mode = state.screen==='wordtest' ? 'word' : 'blank';
   state.screen='scope';
   render();
 }
 
 /* =========================================================
-   범위 선택 화면 (장 + 난이도)
+   범위 선택 화면 (장 + 난이도) — 단어시험/백지시험 전용 (다중 선택)
    ========================================================= */
 function renderScope(main){
   const isWord = state.mode==='word';
@@ -737,7 +926,7 @@ function startTest(){
   // 새 시험을 시작할 때마다 캐시를 비워 항상 현재 선택한 장으로 다시 만든다.
   wordTestData = null;
   blankTestData = null;
-  state.screen = state.mode==='word' ? 'wordtest' : 'blanktest';
+  state.screen = state.scopeReturnTo || (state.mode==='word' ? 'wordtest' : 'blanktest');
   render();
 }
 
@@ -747,7 +936,7 @@ function startTest(){
 function renderRead(main){
   const ch = state.readChapter;
   const verses = getVerses(ch);
-  const chapterOrder = Object.keys(REVELATION).map(Number);
+  const chapterOrder = Array.from({length:TOTAL_CHAPTERS}, (_,i)=>i+1);
   const idx = chapterOrder.indexOf(ch);
   const prevCh = idx>0 ? chapterOrder[idx-1] : null;
   const nextCh = idx<chapterOrder.length-1 ? chapterOrder[idx+1] : null;
@@ -755,22 +944,42 @@ function renderRead(main){
   main.innerHTML = `
     <div class="fade-in">
       <div class="read-chapter-nav">
-        <button class="nav-btn" ${prevCh===null?'disabled':''} onclick="changeReadChapter(${prevCh})">‹</button>
-        <div class="chapter-label">요한계시록 ${ch}장<small>${CHAPTER_TITLES[ch]||''}</small></div>
-        <button class="nav-btn" ${nextCh===null?'disabled':''} onclick="changeReadChapter(${nextCh})">›</button>
+        <div class="chapter-pick-btn">
+          <span class="chapter-pick-num">${ch}장</span>
+          <select class="chapter-pick-select" id="chapter-pick-select" onchange="changeReadChapter(this.value)" aria-label="장 선택">
+            ${chapterOrder.map(c=>`<option value="${c}" ${c===ch?'selected':''} ${hasChapterText(c)?'':'disabled'}>${c}장${hasChapterText(c)?'':' (본문 없음)'}</option>`).join('')}
+          </select>
+        </div>
       </div>
       ${verses.length===0 ? emptyStateHTML(ch) : `
         <div class="reader">
           ${verses.map((v,i)=>`<span class="v"><span class="vnum">${i+1}</span>${escapeHTML(v)} </span>`).join('')}
         </div>
       `}
+      <div style="height:64px"></div>
     </div>
   `;
+
+  renderReadFloatingNav(prevCh, nextCh);
+}
+
+function renderReadFloatingNav(prevCh, nextCh){
+  let nav = document.getElementById('read-floating-nav');
+  if(!nav){
+    nav = document.createElement('div');
+    nav.id='read-floating-nav';
+    document.getElementById('app').appendChild(nav);
+  }
+  nav.innerHTML = `
+    <button class="float-nav-btn" ${prevCh===null?'disabled':''} onclick="changeReadChapter(${prevCh})" aria-label="이전 장">‹</button>
+    <button class="float-nav-btn" ${nextCh===null?'disabled':''} onclick="changeReadChapter(${nextCh})" aria-label="다음 장">›</button>
+  `;
+  nav.style.display = state.screen==='read' ? 'flex' : 'none';
 }
 
 function changeReadChapter(ch){
-  if(ch===null) return;
-  state.readChapter = ch;
+  if(ch===null || ch===undefined || ch==='') return;
+  state.readChapter = Number(ch);
   render();
 }
 
@@ -882,6 +1091,7 @@ function renderWordTest(main){
 
   main.innerHTML = `
     <div class="fade-in">
+      ${renderScopeBarHTML()}
       ${blocksHTML}
       <div class="score-banner">
         ${state.graded ? `<div class="score-summary" id="word-score"></div>` : ''}
@@ -993,6 +1203,7 @@ function renderBlankTest(main){
 
   main.innerHTML = `
     <div class="fade-in">
+      ${renderScopeBarHTML()}
       ${blocksHTML}
       <div class="score-banner">
         ${state.graded ? `<div class="score-summary" id="blank-score"></div>` : ''}
@@ -1013,7 +1224,13 @@ function renderBlankTest(main){
 // 두 문장을 단어 단위로 비교해 다른 부분을 찾아낸다.
 // LCS(최장 공통 부분열)로 정렬하여, 중간에 한 단어가 추가/누락/변경되어도
 // 그 뒤의 멀쩍한 단어들까지 전부 오답으로 표시되지 않도록 한다.
-// 띄어쓰기 차이도 토큰 경계가 달라지므로 자연히 감지된다.
+//
+// 정답 판정은 "띄어쓰기를 무시한 글자 비교"로 한다 (요청사항: 띄어쓰기가 달라도 정답 처리).
+// 다만 띄어쓰기가 어디서 갈렸는지는 아래 원문 표시에서 계속 보여준다.
+function normalizeForGrading(sentence){
+  return String(sentence).replace(/\s+/g, '');
+}
+
 function diffSentences(correctSentence, userSentence){
   const c = correctSentence.split(' ');
   const u = userSentence.split(' ');
@@ -1031,9 +1248,12 @@ function diffSentences(correctSentence, userSentence){
     else if(dp[i-1][j] >= dp[i][j-1]) i--;
     else j--;
   }
-  const allMatch = (n===m) && matched.every(Boolean);
+  // 띄어쓰기를 무시했을 때 글자가 완전히 일치하면 정답으로 처리한다.
+  const allMatch = normalizeForGrading(correctSentence) === normalizeForGrading(userSentence);
+  // 단어 단위 표시는 기존처럼 LCS로 다른 부분만 짚어준다 (띄어쓰기 차이도 여기서 드러남).
+  const wordsExactlyMatch = (n===m) && matched.every(Boolean);
   const correctRendered = c.map((word,idx)=>`<span class="diff-word ${matched[idx]?'':'bad'}">${escapeHTML(word)}</span>`);
-  return { allMatch, correctHTML: correctRendered.join(' ') };
+  return { allMatch, wordsExactlyMatch, correctHTML: correctRendered.join(' ') };
 }
 
 function gradeBlankTest(){
@@ -1043,15 +1263,24 @@ function gradeBlankTest(){
     const answer = ta.dataset.answer;
     const given = ta.value.replace(/\n/g,' ');
     ta.classList.remove('correct','wrong');
-    const { allMatch, correctHTML } = diffSentences(answer, given);
+    const { allMatch, wordsExactlyMatch, correctHTML } = diffSentences(answer, given);
     const revealEl = document.getElementById(ta.id+'-reveal');
     if(allMatch && given.trim().length>0){
       ta.classList.add('correct');
       ta.disabled=true;
-      revealEl.classList.remove('show');
       correct++;
+      if(wordsExactlyMatch){
+        // 띄어쓰기까지 완전히 같으면 원문을 따로 보여줄 필요 없음
+        revealEl.classList.remove('show','spacing-note');
+        revealEl.innerHTML='';
+      } else {
+        // 글자는 맞았지만(=정답 처리) 띄어쓰기가 달랐던 경우, 어디가 달랐는지는 계속 보여준다.
+        revealEl.innerHTML = `<div class="label">띄어쓰기 차이</div>${correctHTML}`;
+        revealEl.classList.add('show','spacing-note');
+      }
     } else {
       ta.classList.add('wrong');
+      revealEl.classList.remove('spacing-note');
       revealEl.innerHTML = `<div class="label">정답</div>${correctHTML}`;
       revealEl.classList.add('show');
     }
@@ -1081,7 +1310,7 @@ function resetBlankTest(){
     ta.disabled=false;
     ta.classList.remove('correct','wrong');
   });
-  document.querySelectorAll('.answer-reveal').forEach(r=>r.classList.remove('show'));
+  document.querySelectorAll('.answer-reveal').forEach(r=>r.classList.remove('show','spacing-note'));
 }
 
 /* =========================================================
